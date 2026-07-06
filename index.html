@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabaran Pinggan Sihat</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; text-align: center; padding: 20px; }
+        .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .food-card { width: 100px; padding: 10px; background: white; border-radius: 10px; border: 2px solid #ddd; cursor: pointer; transition: 0.3s; }
+        .food-card.selected { border-color: #2ecc71; background: #e8f8f0; transform: scale(1.05); }
+        .food-card img { width: 100%; border-radius: 5px; }
+        .btn-hantar { background: #0088cc; color: white; padding: 15px 30px; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; width: 100%; }
+        #result { display: none; margin-top: 20px; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; }
+        .category-title { background: #34495e; color: white; padding: 5px; border-radius: 5px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <h2>🍱 Cabaran Pinggan Sihat</h2>
+    <input type="text" id="playerName" placeholder="Nama Anda" style="padding:10px; width:80%; margin-bottom:10px;"><br>
+    <input type="text" id="playerClass" placeholder="Kelas / Jawatan" style="padding:10px; width:80%; margin-bottom:20px;">
+
+    <div id="game-area">
+        <div class="category-title">1. Pilih Karbohidrat (Suku)</div>
+        <div class="card-container" id="karbo">
+            <div class="food-card" onclick="select('karbo', this, 25, 'Nasi Perang')">🍚<br>Nasi Perang</div>
+            <div class="food-card" onclick="select('karbo', this, 15, 'Nasi Putih')">🍚<br>Nasi Putih</div>
+            <div class="food-card" onclick="select('karbo', this, 0, 'Mi Segera')">🍜<br>Mi Segera</div>
+        </div>
+
+        <div class="category-title">2. Pilih Protein (Suku)</div>
+        <div class="card-container" id="protein">
+            <div class="food-card" onclick="select('protein', this, 25, 'Ayam Bakar')">🍗<br>Ayam Bakar</div>
+            <div class="food-card" onclick="select('protein', this, 15, 'Ayam Goreng')">🍗<br>Ayam Goreng</div>
+            <div class="food-card" onclick="select('protein', this, 0, 'Nugget')">🍢<br>Nugget</div>
+        </div>
+
+        <div class="category-title">3. Pilih Sayur/Buah (Separuh)</div>
+        <div class="card-container" id="sayur">
+            <div class="food-card" onclick="select('sayur', this, 25, 'Brokoli')">🥦<br>Brokoli</div>
+            <div class="food-card" onclick="select('sayur', this, 15, 'Sayur Goreng')">🥗<br>Sayur Goreng</div>
+            <div class="food-card" onclick="select('sayur', this, -10, 'Tiada Sayur')">❌<br>Tiada</div>
+        </div>
+
+        <div class="category-title">4. Pilih Minuman</div>
+        <div class="card-container" id="air">
+            <div class="food-card" onclick="select('air', this, 25, 'Air Kosong')">💧<br>Air Kosong</div>
+            <div class="food-card" onclick="select('air', this, 15, 'Teh O Ais')">🍹<br>Teh O Ais</div>
+            <div class="food-card" onclick="select('air', this, 0, 'Air Boba')">🧋<br>Air Boba</div>
+        </div>
+
+        <button class="btn-hantar" onclick="calculateScore()">HANTAR MENU 🚀</button>
+    </div>
+
+    <div id="result">
+        <h3 id="scoreText"></h3>
+        <p id="msgText"></p>
+        <button onclick="location.reload()">Main Lagi</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let selections = { karbo: 0, protein: 0, sayur: 0, air: 0 };
+        
+        function select(cat, element, score, name) {
+            // Unselect others in same category
+            let cards = document.getElementById(cat).getElementsByClassName('food-card');
+            for(let card of cards) card.classList.remove('selected');
+            
+            // Select this one
+            element.classList.add('selected');
+            selections[cat] = score;
+        }
+
+        function calculateScore() {
+            let name = document.getElementById('playerName').value;
+            let kelas = document.getElementById('playerClass').value;
+            
+            if(!name || !kelas) { alert("Masukkan nama dan kelas!"); return; }
+
+            let total = selections.karbo + selections.protein + selections.sayur + selections.air;
+            
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('scoreText').innerText = "Markah: " + total + "/100";
+
+            let msg = "";
+            if(total >= 90) msg = "Hebat! Anda Hero Kesihatan! 👑";
+            else if(total >= 60) msg = "Bagus! Menu yang seimbang. 👍";
+            else msg = "Alamak, menu ini kurang sihat. Jom belajar lagi! 🚨";
+            
+            document.getElementById('msgText').innerText = msg;
+
+            // Hantar data balik ke Telegram Bot
+            tg.sendData(JSON.stringify({name: name, class: kelas, score: total}));
+        }
+    </script>
+</body>
+</html>
