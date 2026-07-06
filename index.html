@@ -3,102 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cabaran Pinggan Sihat</title>
+    <title>Cabaran Pinggan Sihat v2.0</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; text-align: center; padding: 20px; }
-        .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .food-card { width: 100px; padding: 10px; background: white; border-radius: 10px; border: 2px solid #ddd; cursor: pointer; transition: 0.3s; }
-        .food-card.selected { border-color: #2ecc71; background: #e8f8f0; transform: scale(1.05); }
-        .food-card img { width: 100%; border-radius: 5px; }
-        .btn-hantar { background: #0088cc; color: white; padding: 15px 30px; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; width: 100%; }
-        #result { display: none; margin-top: 20px; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; }
-        .category-title { background: #34495e; color: white; padding: 5px; border-radius: 5px; margin-top: 15px; }
+        :root { --primary: #11caa0; --secondary: #005088; --danger: #ef4444; --bg: #f8fafc; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #334155; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .meter-container { background: #e2e8f0; border-radius: 20px; height: 12px; margin: 15px 0; overflow: hidden; }
+        .meter-fill { height: 100%; width: 0%; background: var(--primary); transition: 0.5s; }
+        
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+        .card { 
+            background: white; border-radius: 12px; padding: 10px; text-align: center; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid transparent; transition: 0.2s; cursor: pointer;
+        }
+        .card:active { transform: scale(0.95); }
+        .card.selected { border-color: var(--primary); background: #f0fdf4; box-shadow: 0 8px 15px rgba(17, 202, 160, 0.2); }
+        .card-icon { font-size: 28px; margin-bottom: 5px; }
+        .card-name { font-size: 11px; font-weight: 600; line-height: 1.2; }
+        
+        .section-title { font-size: 14px; font-weight: 700; color: var(--secondary); margin: 15px 0 10px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .btn-submit { background: var(--secondary); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 16px; font-weight: 700; margin-top: 20px; box-shadow: 0 10px 20px rgba(0, 80, 136, 0.2); }
+        
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <h2>🍱 Cabaran Pinggan Sihat</h2>
-    <input type="text" id="playerName" placeholder="Nama Anda" style="padding:10px; width:80%; margin-bottom:10px;"><br>
-    <input type="text" id="playerClass" placeholder="Kelas / Jawatan" style="padding:10px; width:80%; margin-bottom:20px;">
+<div class="header">
+    <h2 style="margin:0">🍱 Pinggan Sihat 2.0</h2>
+    <p style="font-size:12px; margin:5px 0">Bina menu seimbang anda!</p>
+    <div class="meter-container"><div id="meter" class="meter-fill"></div></div>
+</div>
 
-    <div id="game-area">
-        <div class="category-title">1. Pilih Karbohidrat (Suku)</div>
-        <div class="card-container" id="karbo">
-            <div class="food-card" onclick="select('karbo', this, 25, 'Nasi Perang')">🍚<br>Nasi Perang</div>
-            <div class="food-card" onclick="select('karbo', this, 15, 'Nasi Putih')">🍚<br>Nasi Putih</div>
-            <div class="food-card" onclick="select('karbo', this, 0, 'Mi Segera')">🍜<br>Mi Segera</div>
-        </div>
+<input type="text" id="pName" placeholder="Nama Penuh">
+<input type="text" id="pClass" placeholder="Kelas / Jawatan">
 
-        <div class="category-title">2. Pilih Protein (Suku)</div>
-        <div class="card-container" id="protein">
-            <div class="food-card" onclick="select('protein', this, 25, 'Ayam Bakar')">🍗<br>Ayam Bakar</div>
-            <div class="food-card" onclick="select('protein', this, 15, 'Ayam Goreng')">🍗<br>Ayam Goreng</div>
-            <div class="food-card" onclick="select('protein', this, 0, 'Nugget')">🍢<br>Nugget</div>
-        </div>
+<div class="section-title">🍚 Karbohidrat (Suku)</div>
+<div class="grid" id="cat-karbo">
+    <div class="card" onclick="sel('karbo', this, 25, 'Beras Perang')"><div class="card-icon">🌾</div><div class="card-name">Beras Perang</div></div>
+    <div class="card" onclick="sel('karbo', this, 15, 'Nasi Putih')"><div class="card-icon">🍚</div><div class="card-name">Nasi Putih</div></div>
+    <div class="card" onclick="sel('karbo', this, 5, 'Nasi Goreng')"><div class="card-icon">🍳</div><div class="card-name">Nasi Goreng</div></div>
+    <div class="card" onclick="sel('karbo', this, 25, 'Roti Wholemeal')"><div class="card-icon">🍞</div><div class="card-name">Roti Wholemeal</div></div>
+    <div class="card" onclick="sel('karbo', this, 0, 'Mi Segera')"><div class="card-icon">🍜</div><div class="card-name">Mi Segera</div></div>
+    <div class="card" onclick="sel('karbo', this, 10, 'Kentang Putar')"><div class="card-icon">🥔</div><div class="card-name">Kentang Putar</div></div>
+</div>
 
-        <div class="category-title">3. Pilih Sayur/Buah (Separuh)</div>
-        <div class="card-container" id="sayur">
-            <div class="food-card" onclick="select('sayur', this, 25, 'Brokoli')">🥦<br>Brokoli</div>
-            <div class="food-card" onclick="select('sayur', this, 15, 'Sayur Goreng')">🥗<br>Sayur Goreng</div>
-            <div class="food-card" onclick="select('sayur', this, -10, 'Tiada Sayur')">❌<br>Tiada</div>
-        </div>
+<div class="section-title">🍗 Protein (Suku)</div>
+<div class="grid" id="cat-protein">
+    <div class="card" onclick="sel('protein', this, 25, 'Ayam Bakar')"><div class="card-icon">🔥</div><div class="card-name">Ayam Bakar</div></div>
+    <div class="card" onclick="sel('protein', this, 25, 'Ikan Singgang')"><div class="card-icon">🐟</div><div class="card-name">Ikan Singgang</div></div>
+    <div class="card" onclick="sel('protein', this, 20, 'Telur Rebus')"><div class="card-icon">🥚</div><div class="card-name">Telur Rebus</div></div>
+    <div class="card" onclick="sel('protein', this, 10, 'Ayam Goreng')"><div class="card-icon">🍗</div><div class="card-name">Ayam Goreng</div></div>
+    <div class="card" onclick="sel('protein', this, 0, 'Nugget')"><div class="card-icon">🍢</div><div class="card-name">Nugget</div></div>
+    <div class="card" onclick="sel('protein', this, 15, 'Tempeh')"><div class="card-icon">🧀</div><div class="card-name">Tempeh</div></div>
+</div>
 
-        <div class="category-title">4. Pilih Minuman</div>
-        <div class="card-container" id="air">
-            <div class="food-card" onclick="select('air', this, 25, 'Air Kosong')">💧<br>Air Kosong</div>
-            <div class="food-card" onclick="select('air', this, 15, 'Teh O Ais')">🍹<br>Teh O Ais</div>
-            <div class="food-card" onclick="select('air', this, 0, 'Air Boba')">🧋<br>Air Boba</div>
-        </div>
+<div class="section-title">🥦 Sayur & Buah (Separuh)</div>
+<div class="grid" id="cat-sayur">
+    <div class="card" onclick="sel('sayur', this, 25, 'Ulam')"><div class="card-icon">🌿</div><div class="card-name">Ulam-ulaman</div></div>
+    <div class="card" onclick="sel('sayur', this, 25, 'Brokoli')"><div class="card-icon">🥦</div><div class="card-name">Brokoli</div></div>
+    <div class="card" onclick="sel('sayur', this, 15, 'Capcai')"><div class="card-icon">🥗</div><div class="card-name">Capcai</div></div>
+    <div class="card" onclick="sel('sayur', this, 25, 'Tembikai')"><div class="card-icon">🍉</div><div class="card-name">Tembikai</div></div>
+    <div class="card" onclick="sel('sayur', this, 25, 'Salad')"><div class="card-icon">🥗</div><div class="card-name">Salad</div></div>
+    <div class="card" onclick="sel('sayur', this, -15, 'Tiada Sayur')"><div class="card-icon">❌</div><div class="card-name">Tiada Sayur</div></div>
+</div>
 
-        <button class="btn-hantar" onclick="calculateScore()">HANTAR MENU 🚀</button>
-    </div>
+<div class="section-title">💧 Minuman</div>
+<div class="grid" id="cat-air">
+    <div class="card" onclick="sel('air', this, 25, 'Air Kosong')"><div class="card-icon">💧</div><div class="card-name">Air Kosong</div></div>
+    <div class="card" onclick="sel('air', this, 20, 'Susu')"><div class="card-icon">🥛</div><div class="card-name">Susu Segar</div></div>
+    <div class="card" onclick="sel('air', this, -10, 'Teh Tarik')"><div class="card-icon">☕</div><div class="card-name">Teh Tarik</div></div>
+    <div class="card" onclick="sel('air', this, -15, 'Air Gas')"><div class="card-icon">🥤</div><div class="card-name">Air Gas</div></div>
+    <div class="card" onclick="sel('air', this, -5, 'Milo Ais')"><div class="card-icon">🍫</div><div class="card-name">Milo Ais</div></div>
+    <div class="card" onclick="sel('air', this, 15, 'Jus Oren')"><div class="card-icon">🍊</div><div class="card-name">Jus Oren</div></div>
+</div>
 
-    <div id="result">
-        <h3 id="scoreText"></h3>
-        <p id="msgText"></p>
-        <button onclick="location.reload()">Main Lagi</button>
-    </div>
+<button class="btn-submit" onclick="finish()">HANTAR KEPUTUSAN 🚀</button>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+    let scores = { karbo: 0, protein: 0, sayur: 0, air: 0 };
 
-        let selections = { karbo: 0, protein: 0, sayur: 0, air: 0 };
-        
-        function select(cat, element, score, name) {
-            // Unselect others in same category
-            let cards = document.getElementById(cat).getElementsByClassName('food-card');
-            for(let card of cards) card.classList.remove('selected');
-            
-            // Select this one
-            element.classList.add('selected');
-            selections[cat] = score;
-        }
+    function sel(cat, el, val, name) {
+        let parent = document.getElementById('cat-' + cat);
+        Array.from(parent.children).forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        scores[cat] = val;
+        updateMeter();
+    }
 
-        function calculateScore() {
-            let name = document.getElementById('playerName').value;
-            let kelas = document.getElementById('playerClass').value;
-            
-            if(!name || !kelas) { alert("Masukkan nama dan kelas!"); return; }
+    function updateMeter() {
+        let total = Object.values(scores).reduce((a, b) => a + b, 0);
+        let percent = Math.max(0, total);
+        document.getElementById('meter').style.width = percent + '%';
+        if(percent > 80) document.getElementById('meter').style.background = '#11caa0';
+        else if(percent > 50) document.getElementById('meter').style.background = '#facc15';
+        else document.getElementById('meter').style.background = '#ef4444';
+    }
 
-            let total = selections.karbo + selections.protein + selections.sayur + selections.air;
-            
-            document.getElementById('game-area').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('scoreText').innerText = "Markah: " + total + "/100";
-
-            let msg = "";
-            if(total >= 90) msg = "Hebat! Anda Hero Kesihatan! 👑";
-            else if(total >= 60) msg = "Bagus! Menu yang seimbang. 👍";
-            else msg = "Alamak, menu ini kurang sihat. Jom belajar lagi! 🚨";
-            
-            document.getElementById('msgText').innerText = msg;
-
-            // Hantar data balik ke Telegram Bot
-            tg.sendData(JSON.stringify({name: name, class: kelas, score: total}));
-        }
-    </script>
+    function finish() {
+        let n = document.getElementById('pName').value;
+        let c = document.getElementById('pClass').value;
+        if(!n || !c) { tg.showAlert("Sila isi nama dan kelas!"); return; }
+        let total = Object.values(scores).reduce((a, b) => a + b, 0);
+        tg.showConfirm("Markah anda: " + total + "/100. Hantar sekarang?", (ok) => {
+            if(ok) tg.sendData(JSON.stringify({name: n, class: c, score: total}));
+        });
+    }
+</script>
 </body>
 </html>
+
+**Langkah Seterusnya:**
+Anda boleh mula menggantikan emoji dalam kod tersebut dengan link gambar PNG sebenar (contoh: gantikan `🌾` dengan `<img src="link_gambar.png" width="40">`).
+
+Adakah anda mahu saya tunjukkan cara paling mudah untuk buat **Live Leaderboard** menggunakan **Google Sheets**? Ini akan membuatkan booth anda nampak sangat profesional!
