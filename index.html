@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Plate Challenge v2.5</title>
+    <title>Pixel Plate: Linear Journey</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
@@ -25,18 +25,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
         }
 
+        /* HEADER */
         .header { text-align: center; width: 100%; border: 4px solid var(--pixel-border); padding: 10px; margin-bottom: 15px; background: #16213e; }
-        .title { font-size: 32px; color: var(--health-green); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+        .title { font-size: 32px; color: var(--health-green); margin: 0; text-transform: uppercase; }
         
-        .input-group { width: 100%; display: flex; gap: 5px; margin-top: 10px; }
-        input { 
-            flex: 1; background: #0f3460; border: 2px solid var(--pixel-border); 
-            color: white; padding: 8px; font-family: 'VT323', monospace; font-size: 18px;
-        }
+        .step-indicator { font-size: 24px; color: var(--health-yellow); margin: 10px 0; background: #0f3460; padding: 5px 15px; border: 2px dashed var(--white); width: 100%; text-align: center; }
 
+        /* THE PLATE */
         .plate-container {
             width: 280px; height: 280px;
             background: #e2e8f0; border: 8px solid #334155;
@@ -45,151 +42,162 @@
             overflow: hidden; position: relative; margin-bottom: 15px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
         }
-        .quadrant { display: flex; align-items: center; justify-content: center; font-size: 50px; border: 1px dashed #cbd5e1; color: #000; }
+        .quadrant { display: flex; align-items: center; justify-content: center; font-size: 60px; color: #000; border: 1px dashed #cbd5e1; min-height: 140px; transition: 0.3s; }
         .quad-vege { grid-column: span 2; }
         
-        .status-bar { width: 100%; margin-bottom: 20px; }
-        .hp-text { font-size: 20px; display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .hp-container { width: 100%; height: 25px; background: #333; border: 3px solid var(--white); position: relative; }
-        .hp-fill { height: 100%; width: 0%; background: var(--health-green); transition: 0.5s; }
-
-        .menu-container { width: 100%; }
-        .cat-title { font-size: 24px; color: var(--health-yellow); margin: 15px 0 5px; text-transform: uppercase; border-bottom: 2px solid; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        /* MENU SELECTION (HIDE/SHOW LOGIC) */
+        .menu-section { width: 100%; display: none; }
+        .menu-section.active { display: block; }
         
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pixel-card {
             background: #16213e; border: 3px solid var(--pixel-border);
-            padding: 8px; text-align: center; cursor: pointer; transition: 0.1s;
+            padding: 10px; text-align: center; cursor: pointer;
         }
-        .pixel-card:active { transform: translateY(4px); }
-        .pixel-card.selected { border-color: var(--health-green); background: #0f3460; box-shadow: 0 0 10px var(--health-green); }
-        .icon { font-size: 35px; display: block; margin-bottom: 2px; }
+        .pixel-card:active { transform: scale(0.95); background: var(--health-green); color: black; }
+        .icon { font-size: 40px; display: block; }
         .name { font-size: 14px; display: block; line-height: 1; }
 
-        .btn-submit {
-            width: 100%; padding: 15px; margin-top: 30px;
-            background: var(--health-green); border: none;
-            color: #000; font-family: 'VT323', monospace;
-            font-size: 28px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 6px 0 #008121;
+        /* FORM */
+        #pendaftaran { width: 100%; text-align: center; }
+        input { 
+            width: 90%; background: #0f3460; border: 3px solid var(--pixel-border); 
+            color: white; padding: 12px; font-family: 'VT323', monospace; font-size: 22px; margin-bottom: 10px;
         }
-        .btn-submit:active { transform: translateY(4px); box-shadow: 0 2px 0 #008121; }
+
+        .btn-next {
+            background: var(--health-green); color: #000; border: none;
+            padding: 15px 30px; font-family: VT323; font-size: 24px; font-weight: bold; margin-top: 10px; cursor: pointer;
+        }
+
+        /* RESULT SCREEN */
+        #result-screen { display: none; text-align: center; width: 100%; }
+        .hp-val { font-size: 60px; color: var(--health-green); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 class="title">PIXEL PLATE CHALLENGE</h1>
-        <div class="input-group">
-            <input type="text" id="pName" placeholder="NAMA">
-            <input type="text" id="pClass" placeholder="KELAS">
-        </div>
+        <h1 class="title">PIXEL PLATE JOURNEY</h1>
     </div>
 
     <div class="plate-container">
-        <div id="p-karbo" class="quadrant" title="Suku Karbo"></div>
-        <div id="p-protein" class="quadrant" title="Suku Protein"></div>
-        <div id="p-vege" class="quadrant quad-vege" title="Separuh Sayur/Buah"></div>
+        <div id="p-karbo" class="quadrant">?</div>
+        <div id="p-protein" class="quadrant">?</div>
+        <div id="p-vege" class="quadrant quad-vege">?</div>
     </div>
 
-    <div class="status-bar">
-        <div class="hp-text">
-            <span>HEALTH POINTS (HP)</span>
-            <span id="hp-val">0/100</span>
-        </div>
-        <div class="hp-container">
-            <div id="hp-fill" class="hp-fill"></div>
-        </div>
+    <div id="step-msg" class="step-indicator">SILA DAFTAR DULU</div>
+
+    <div id="pendaftaran" class="menu-section active">
+        <input type="text" id="pName" placeholder="NAMA ANDA">
+        <input type="text" id="pClass" placeholder="KELAS / JAWATAN">
+        <button class="btn-next" onclick="startJourney()">MULA CABARAN [START]</button>
     </div>
 
-    <div class="menu-container">
-        <div class="cat-title">> 1. KARBOHIDRAT (SUKU)</div>
-        <div class="grid" id="list-karbo">
-            <div class="pixel-card" onclick="sel('karbo', '🍚', 15, 'NASI PUTIH', this)"><span class="icon">🍚</span><span class="name">NASI PUTIH</span></div>
-            <div class="pixel-card" onclick="sel('karbo', '🌾', 25, 'BERAS PERANG', this)"><span class="icon">🌾</span><span class="name">BERAS PERANG</span></div>
-            <div class="pixel-card" onclick="sel('karbo', '🍞', 25, 'ROTI WHOLE', this)"><span class="icon">🍞</span><span class="name">ROTI WHOLE</span></div>
-            <div class="pixel-card" onclick="sel('karbo', '🍝', 5, 'KUEY TEOW', this)"><span class="icon">🍝</span><span class="name">KUEY TEOW GORENG</span></div>
-            <div class="pixel-card" onclick="sel('karbo', '🥔', 20, 'UBI REBUS', this)"><span class="icon">🥔</span><span class="name">UBI REBUS</span></div>
-            <div class="pixel-card" onclick="sel('karbo', '🍜', 0, 'MI SEGERA', this)"><span class="icon">🍜</span><span class="name">MI SEGERA</span></div>
-        </div>
-
-        <div class="cat-title">> 2. PROTEIN (SUKU)</div>
-        <div class="grid" id="list-protein">
-            <div class="pixel-card" onclick="sel('protein', '🐟', 25, 'IKAN REBUS', this)"><span class="icon">🐟</span><span class="name">IKAN SINGGANG</span></div>
-            <div class="pixel-card" onclick="sel('protein', '🔥', 25, 'AYAM BAKAR', this)"><span class="icon">🔥</span><span class="name">AYAM BAKAR</span></div>
-            <div class="pixel-card" onclick="sel('protein', '🥚', 20, 'TELUR REBUS', this)"><span class="icon">🥚</span><span class="name">TELUR REBUS</span></div>
-            <div class="pixel-card" onclick="sel('protein', '🍗', 10, 'AYAM GORENG', this)"><span class="icon">🍗</span><span class="name">AYAM GORENG</span></div>
-            <div class="pixel-card" onclick="sel('protein', '🧀', 15, 'TEMPEH', this)"><span class="icon">🧀</span><span class="name">TEMPEH GORENG</span></div>
-            <div class="pixel-card" onclick="sel('protein', '🍢', 0, 'SOSEJ', this)"><span class="icon">🍢</span><span class="name">SOSEJ / NUGGET</span></div>
-        </div>
-
-        <div class="cat-title">> 3. SAYUR & BUAH (SEPARUH)</div>
-        <div class="grid" id="list-vege">
-            <div class="pixel-card" onclick="sel('vege', '🥦', 25, 'BROKOLI', this)"><span class="icon">🥦</span><span class="name">BROKOLI SUP</span></div>
-            <div class="pixel-card" onclick="sel('vege', '🌿', 25, 'ULAM', this)"><span class="icon">🌿</span><span class="name">ULAM RAJA</span></div>
-            <div class="pixel-card" onclick="sel('vege', '🍉', 25, 'TEMBIKAI', this)"><span class="icon">🍉</span><span class="name">TEMBIKAI</span></div>
-            <div class="pixel-card" onclick="sel('vege', '🥗', 15, 'CAPCAI', this)"><span class="icon">🥗</span><span class="name">CAPCAI GORENG</span></div>
-            <div class="pixel-card" onclick="sel('vege', '🍌', 25, 'PISANG', this)"><span class="icon">🍌</span><span class="name">BUAH PISANG</span></div>
-            <div class="pixel-card" onclick="sel('vege', '❌', -15, 'TIADA', this)"><span class="icon">❌</span><span class="name">SKIP SAYUR</span></div>
-        </div>
-
-        <div class="cat-title">> 4. MINUMAN (PELENGKAP)</div>
-        <div class="grid" id="list-air">
-            <div class="pixel-card" onclick="sel('air', '', 25, 'AIR KOSONG', this)"><span class="icon">💧</span><span class="name">AIR KOSONG</span></div>
-            <div class="pixel-card" onclick="sel('air', '', 20, 'SUSU SEGAR', this)"><span class="icon">🥛</span><span class="name">SUSU SEGAR</span></div>
-            <div class="pixel-card" onclick="sel('air', '', 15, 'JUS OREN', this)"><span class="icon">🍊</span><span class="name">JUS OREN KOTAK</span></div>
-            <div class="pixel-card" onclick="sel('air', '', -5, 'MILO AIS', this)"><span class="icon">🍫</span><span class="name">MILO AIS</span></div>
-            <div class="pixel-card" onclick="sel('air', '', -10, 'TEH TARIK', this)"><span class="icon">☕</span><span class="name">TEH TARIK</span></div>
-            <div class="pixel-card" onclick="sel('air', '', -15, 'AIR GAS', this)"><span class="icon">🥤</span><span class="name">AIR GAS</span></div>
+    <div id="step-1" class="menu-section">
+        <div class="grid">
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍚', 15, 'NASI PUTIH')"><span class="icon">🍚</span><span class="name">NASI PUTIH</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🌾', 25, 'BERAS PERANG')"><span class="icon">🌾</span><span class="name">BERAS PERANG</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍞', 25, 'ROTI WHOLE')"><span class="icon">🍞</span><span class="name">ROTI WHOLE</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍝', 5, 'KUEY TEOW')"><span class="icon">🍝</span><span class="name">KUEY TEOW</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🥔', 20, 'UBI REBUS')"><span class="icon">🥔</span><span class="name">UBI REBUS</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍜', 0, 'MI SEGERA')"><span class="icon">🍜</span><span class="name">MI SEGERA</span></div>
         </div>
     </div>
 
-    <button class="btn-submit" onclick="submit()">HANTAR MENU [START]</button>
+    <div id="step-2" class="menu-section">
+        <div class="grid">
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🐟', 25, 'IKAN SINGGANG')"><span class="icon">🐟</span><span class="name">IKAN SINGGANG</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🔥', 25, 'AYAM BAKAR')"><span class="icon">🔥</span><span class="name">AYAM BAKAR</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🥚', 20, 'TELUR REBUS')"><span class="icon">🥚</span><span class="name">TELUR REBUS</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🍗', 10, 'AYAM GORENG')"><span class="icon">🍗</span><span class="name">AYAM GORENG</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🍢', 0, 'NUGGET')"><span class="icon">🍢</span><span class="name">NUGGET</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🧀', 15, 'TEMPEH')"><span class="icon">🧀</span><span class="name">TEMPEH</span></div>
+        </div>
+    </div>
+
+    <div id="step-3" class="menu-section">
+        <div class="grid">
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥦', 25, 'BROKOLI')"><span class="icon">🥦</span><span class="name">BROKOLI</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🌿', 25, 'ULAM')"><span class="icon">🌿</span><span class="name">ULAM RAJA</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🍉', 25, 'TEMBIKAI')"><span class="icon">🍉</span><span class="name">TEMBIKAI</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥗', 15, 'CAPCAI')"><span class="icon">🥗</span><span class="name">CAPCAI</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🍌', 25, 'PISANG')"><span class="icon">🍌</span><span class="name">PISANG</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '❌', -15, 'TIADA')"><span class="icon">❌</span><span class="name">TIADA SAYUR</span></div>
+        </div>
+    </div>
+
+    <div id="step-4" class="menu-section">
+        <div class="grid">
+            <div class="pixel-card" onclick="finishJourney(25, 'AIR KOSONG')"><span class="icon">💧</span><span class="name">AIR KOSONG</span></div>
+            <div class="pixel-card" onclick="finishJourney(20, 'SUSU')"><span class="icon">🥛</span><span class="name">SUSU SEGAR</span></div>
+            <div class="pixel-card" onclick="finishJourney(15, 'JUS')"><span class="icon">🍊</span><span class="name">JUS OREN</span></div>
+            <div class="pixel-card" onclick="finishJourney(-5, 'MILO')"><span class="icon">🍫</span><span class="name">MILO AIS</span></div>
+            <div class="pixel-card" onclick="finishJourney(-10, 'TEH')"><span class="icon">☕</span><span class="name">TEH TARIK</span></div>
+            <div class="pixel-card" onclick="finishJourney(-15, 'GAS')"><span class="icon">🥤</span><span class="name">AIR GAS</span></div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h2 style="color: var(--health-yellow);">CABARAN TAMAT!</h2>
+        <div class="hp-val" id="final-hp">0 HP</div>
+        <p id="final-msg"></p>
+        <button class="btn-next" onclick="sendToBot()">SIMPAN & RANKING [SAVE]</button>
+    </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        tg.backgroundColor = "#1a1a2e";
 
-        let scores = { karbo: 0, protein: 0, vege: 0, air: 0 };
+        let totalScore = 0;
+        let pName = "";
+        let pClass = "";
 
-        function sel(cat, emoji, val, name, el) {
-            let parent = el.parentElement;
-            Array.from(parent.children).forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
+        function startJourney() {
+            pName = document.getElementById('pName').value;
+            pClass = document.getElementById('pClass').value;
+            if(!pName || !pClass) { alert("ISI NAMA & KELAS!"); return; }
 
-            if(cat !== 'air') {
-                document.getElementById('p-' + cat).innerText = emoji;
-                document.getElementById('p-' + cat).style.fontSize = "70px";
-                setTimeout(() => { document.getElementById('p-' + cat).style.fontSize = "50px"; }, 100);
-            }
-
-            scores[cat] = val;
-            updateHP();
+            document.getElementById('pendaftaran').classList.remove('active');
+            document.getElementById('step-1').classList.add('active');
+            document.getElementById('step-msg').innerText = "STEP 1: PILIH KARBOHIDRAT";
         }
 
-        function updateHP() {
-            let total = Object.values(scores).reduce((a, b) => a + b, 0);
-            let displayVal = Math.max(0, total);
-            document.getElementById('hp-val').innerText = displayVal + "/100";
+        function nextStep(current, cat, emoji, score, name) {
+            // Update Plate (Kekal)
+            document.getElementById('p-' + cat).innerText = emoji;
+            totalScore += score;
+
+            // Hide Current, Show Next
+            document.getElementById('step-' + current).classList.remove('active');
+            let next = current + 1;
+            document.getElementById('step-' + next).classList.add('active');
+
+            // Update Message
+            let labels = ["", "KARBOHIDRAT", "PROTEIN", "SAYUR & BUAH", "MINUMAN"];
+            document.getElementById('step-msg').innerText = "STEP " + next + ": PILIH " + labels[next];
+        }
+
+        function finishJourney(score, name) {
+            totalScore += score;
+            document.getElementById('step-4').classList.remove('active');
+            document.getElementById('step-msg').style.display = 'none';
             
-            let fill = document.getElementById('hp-fill');
-            fill.style.width = displayVal + "%";
+            document.getElementById('result-screen').style.display = 'block';
+            let finalHP = Math.max(0, totalScore);
+            document.getElementById('final-hp').innerText = finalHP + " HP";
 
-            if(displayVal > 75) fill.style.background = "#00ff41";
-            else if(displayVal > 45) fill.style.background = "#ffcc00";
-            else fill.style.background = "#ff3e3e";
+            let msg = "";
+            if(finalHP >= 90) msg = "LEGEND! JANTUNG ANDA SANGAT GEMBIRA! 👑";
+            else if(finalHP >= 60) msg = "BAGUS! BADAN ANDA SEGAR! 👍";
+            else msg = "AWAS! KURANGKAN MAKANAN PROSES! 🚨";
+            document.getElementById('final-msg').innerText = msg;
         }
 
-        function submit() {
-            let name = document.getElementById('pName').value;
-            let kelas = document.getElementById('pClass').value;
-            if(!name || !kelas) { tg.showAlert("PLEASE INPUT NAME & CLASS!"); return; }
-
-            let total = Object.values(scores).reduce((a, b) => a + b, 0);
-            tg.showConfirm("FINAL SCORE: " + total + " HP. CONFIRM?", (ok) => {
-                if(ok) tg.sendData(JSON.stringify({name: name, class: kelas, score: total}));
-            });
+        function sendToBot() {
+            let finalHP = Math.max(0, totalScore);
+            tg.sendData(JSON.stringify({name: pName, class: pClass, score: finalHP}));
         }
     </script>
 </body>
