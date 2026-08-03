@@ -74,7 +74,7 @@
 <body>
 
     <div class="header">
-        <h1 class="title">PIXEL PLATE JOURNEY</h1>
+        <h1 class="title">PERMAINAN PINGGAN SIHAT</h1>
     </div>
 
     <div class="plate-container">
@@ -87,7 +87,7 @@
 
     <!-- 0. PENDAFTARAN -->
     <div id="sec-pendaftaran" class="menu-section" style="display: block;">
-        <div id="err-fill" class="err-msg">⚠️ SILA ISI NAMA & KELAS!</div>
+        <div id="err-fill" class="err-msg">⚠️ SILA ISI NAMA & KELAS/JAWATAN!</div>
         <input type="text" id="inputNama" placeholder="NAMA ANDA">
         <input type="text" id="inputKelas" placeholder="KELAS / JAWATAN">
         <button type="button" class="btn-next" onclick="startJourney()">MULA CABARAN [START]</button>
@@ -97,11 +97,17 @@
     <div id="step-1" class="menu-section">
         <div class="grid">
             <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍚', 15)"><span class="icon">🍚</span><span class="name">NASI PUTIH</span></div>
-            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🌾', 25)"><span class="icon">🌾</span><span class="name">BERAS PERANG</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🌾', 25)"><span class="icon">🌾</span><span class="name">NASI PERANG</span></div>
             <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍞', 25)"><span class="icon">🍞</span><span class="name">ROTI WHOLE</span></div>
-            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍝', 5)"><span class="icon">🍝</span><span class="name">KUEY TEOW</span></div>
             <div class="pixel-card" onclick="nextStep(1, 'karbo', '🥔', 20)"><span class="icon">🥔</span><span class="name">UBI REBUS</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🥣', 25)"><span class="icon">🥣</span><span class="name">OATMEAL</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🌽', 20)"><span class="icon">🌽</span><span class="name">JAGUNG REBUS</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍠', 20)"><span class="icon">🍠</span><span class="name">KELEDEK BAKAR</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍝', 5)"><span class="icon">🍝</span><span class="name">KUEY TEOW</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🥐', 5)"><span class="icon">🥐</span><span class="name">ROTI CANAI</span></div>
             <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍜', 0)"><span class="icon">🍜</span><span class="name">MI SEGERA</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍩', 0)"><span class="icon">🍩</span><span class="name">DONUT</span></div>
+            <div class="pixel-card" onclick="nextStep(1, 'karbo', '🍟', -5)"><span class="icon">🍟</span><span class="name">FRIES</span></div>
         </div>
     </div>
 
@@ -111,9 +117,15 @@
             <div class="pixel-card" onclick="nextStep(2, 'protein', '🐟', 25)"><span class="icon">🐟</span><span class="name">IKAN SINGGANG</span></div>
             <div class="pixel-card" onclick="nextStep(2, 'protein', '🔥', 25)"><span class="icon">🔥</span><span class="name">AYAM BAKAR</span></div>
             <div class="pixel-card" onclick="nextStep(2, 'protein', '🥚', 20)"><span class="icon">🥚</span><span class="name">TELUR REBUS</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🧀', 20)"><span class="icon">🧀</span><span class="name">TEMPE / TAHU</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🦪', 20)"><span class="icon">🦪</span><span class="name">UDANG KUKUS</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🥩', 20)"><span class="icon">🥩</span><span class="name">DAGING BAKAR</span></div>
             <div class="pixel-card" onclick="nextStep(2, 'protein', '🍗', 10)"><span class="icon">🍗</span><span class="name">AYAM GORENG</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🍳', 10)"><span class="icon">🍳</span><span class="name">TELUR GORENG</span></div>
             <div class="pixel-card" onclick="nextStep(2, 'protein', '🍢', 0)"><span class="icon">🍢</span><span class="name">NUGGET</span></div>
-            <div class="pixel-card" onclick="nextStep(2, 'protein', '🧀', 15)"><span class="icon">🧀</span><span class="name">TEMPEH</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🌭', -5)"><span class="icon">🌭</span><span class="name">SOSIS</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🍔', 0)"><span class="icon">🍔</span><span class="name">PATTY BURGER</span></div>
+            <div class="pixel-card" onclick="nextStep(2, 'protein', '🐟', 5)"><span class="icon">🐟</span><span class="name">IKAN MASIN</span></div>
         </div>
     </div>
 
@@ -122,9 +134,15 @@
         <div class="grid">
             <div class="pixel-card" onclick="nextStep(3, 'vege', '🥦', 25)"><span class="icon">🥦</span><span class="name">BROKOLI</span></div>
             <div class="pixel-card" onclick="nextStep(3, 'vege', '🌿', 25)"><span class="icon">🌿</span><span class="name">ULAM RAJA</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥗', 20)"><span class="icon">🥗</span><span class="name">CAPCAI</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥕', 20)"><span class="icon">🥕</span><span class="name">LOBAK</span></div>
             <div class="pixel-card" onclick="nextStep(3, 'vege', '🍉', 25)"><span class="icon">🍉</span><span class="name">TEMBIKAI</span></div>
-            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥗', 15)"><span class="icon">🥗</span><span class="name">CAPCAI</span></div>
             <div class="pixel-card" onclick="nextStep(3, 'vege', '🍌', 25)"><span class="icon">🍌</span><span class="name">PISANG</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🍎', 25)"><span class="icon">🍎</span><span class="name">EPAL MERAH</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥭', 20)"><span class="icon">🥭</span><span class="name">MANGGA</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🥒', 20)"><span class="icon">🥒</span><span class="name">TIMUN</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🍍', 20)"><span class="icon">🍍</span><span class="name">NENAS</span></div>
+            <div class="pixel-card" onclick="nextStep(3, 'vege', '🍇', 20)"><span class="icon">🍇</span><span class="name">ANGGUR</span></div>
             <div class="pixel-card" onclick="nextStep(3, 'vege', '❌', -15)"><span class="icon">❌</span><span class="name">TIADA SAYUR</span></div>
         </div>
     </div>
@@ -135,9 +153,15 @@
             <div class="pixel-card" onclick="finishJourney(25)"><span class="icon">💧</span><span class="name">AIR KOSONG</span></div>
             <div class="pixel-card" onclick="finishJourney(20)"><span class="icon">🥛</span><span class="name">SUSU SEGAR</span></div>
             <div class="pixel-card" onclick="finishJourney(15)"><span class="icon">🍊</span><span class="name">JUS OREN</span></div>
+            <div class="pixel-card" onclick="finishJourney(20)"><span class="icon">🍵</span><span class="name">TEH GREEN TEA</span></div>
+            <div class="pixel-card" onclick="finishJourney(15)"><span class="icon">🥥</span><span class="name">AIR KELAPA</span></div>
             <div class="pixel-card" onclick="finishJourney(-5)"><span class="icon">🍫</span><span class="name">MILO AIS</span></div>
             <div class="pixel-card" onclick="finishJourney(-10)"><span class="icon">☕</span><span class="name">TEH TARIK</span></div>
             <div class="pixel-card" onclick="finishJourney(-15)"><span class="icon">🥤</span><span class="name">AIR GAS</span></div>
+            <div class="pixel-card" onclick="finishJourney(-20)"><span class="icon">🧋</span><span class="name">BOBA TEA</span></div>
+            <div class="pixel-card" onclick="finishJourney(-10)"><span class="icon">🧃</span><span class="name">BANDUNG</span></div>
+            <div class="pixel-card" onclick="finishJourney(-15)"><span class="icon">⚡</span><span class="name">ENERGY DRINK</span></div>
+            <div class="pixel-card" onclick="finishJourney(-10)"><span class="icon">🍧</span><span class="name">CENDOL</span></div>
         </div>
     </div>
 
