@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVE RANKING - PIXEL PLATE</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --white: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: 'VT323', monospace;
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 60px;
+            color: var(--green);
+            margin: 0 0 10px 0;
+            text-shadow: 4px 4px #000;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: var(--yellow);
+            margin-bottom: 30px;
+        }
+
+        .leaderboard {
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .row {
+            background: var(--card-bg);
+            border: 4px solid #334155;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 32px;
+            box-shadow: 0 5px 0 #000;
+        }
+
+        /* Top 3 Special Effects */
+        .rank-1 { border-color: #f59e0b; background: #2d2206; color: #fef08a; font-size: 38px; }
+        .rank-2 { border-color: #94a3b8; background: #1e293b; color: #e2e8f0; }
+        .rank-3 { border-color: #b45309; background: #2a1a08; color: #fed7aa; }
+
+        .rank-badge { width: 50px; font-weight: bold; }
+        .player-info { flex: 1; text-align: left; padding-left: 20px; text-transform: uppercase; }
+        .player-class { font-size: 22px; color: #94a3b8; margin-left: 10px; }
+        .score { font-weight: bold; color: var(--green); }
+        .rank-1 .score { color: #f59e0b; }
+
+        .live-tag {
+            position: fixed; top: 20px; right: 20px;
+            background: #ef4444; color: white; padding: 5px 15px;
+            font-size: 20px; border-radius: 5px; animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="live-tag">🔴 LIVE AUTO-REFRESH</div>
+    <h1>🥑 LEADERBOARD WIRA SIHAT 🥩</h1>
+    <div class="subtitle">>>> TOP 10 PINGGAN PALING BALANCED <<<</div>
+
+    <div class="leaderboard" id="board">
+        <div style="font-size: 30px;">MEMUATKAN DATA...</div>
+    </div>
+
+    <script>
+        // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyYhZaR6E3xk9cPa8AnXue2JksB6wCoX5nLZfhUrF-rE3CZBHXYtWR15AOwigH61_Ff/exec";
+
+        function fetchLeaderboard() {
+            fetch(scriptURL)
+                .then(res => res.json())
+                .then(data => {
+                    let html = "";
+                    if(data.length === 0) {
+                        html = '<div style="font-size: 30px;">BELUM ADA PESERTA. JADI YANG PERTAMA!</div>';
+                    } else {
+                        data.forEach((item, index) => {
+                            let rankClass = "";
+                            let medal = `#${index + 1}`;
+                            
+                            if(index === 0) { rankClass = "rank-1"; medal = "🥇 1ST"; }
+                            else if(index === 1) { rankClass = "rank-2"; medal = "🥈 2ND"; }
+                            else if(index === 2) { rankClass = "rank-3"; medal = "🥉 3RD"; }
+
+                            html += `
+                                <div class="row ${rankClass}">
+                                    <div class="rank-badge">${medal}</div>
+                                    <div class="player-info">
+                                        ${item.name} <span class="player-class">[${item.class}]</span>
+                                    </div>
+                                    <div class="score">${item.score} HP</div>
+                                </div>
+                            `;
+                        });
+                    }
+                    document.getElementById('board').innerHTML = html;
+                })
+                .catch(err => console.error("Error loading board:", err));
+        }
+
+        // Tembak data pertama kali
+        fetchLeaderboard();
+
+        // Auto-refresh data setiap 3 saat tanpa reload page!
+        setInterval(fetchLeaderboard, 3000);
+    </script>
+</body>
+</html>
