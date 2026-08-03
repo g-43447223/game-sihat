@@ -205,21 +205,32 @@
         }
 
         function sendToBot() {
-            let finalHP = Math.max(0, totalScore);
-            let dataHantar = { name: playerNama, class: playerKelas, score: finalHP };
+    let finalHP = Math.max(0, totalScore);
+    let dataHantar = { name: playerNama, class: playerKelas, score: finalHP };
 
-            // GANTIKAN DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-            let googleSheetsURL = "https://script.google.com/macros/s/AKfycbyYhZaR6E3xk9cPa8AnXue2JksB6wCoX5nLZfhUrF-rE3CZBHXYtWR15AOwigH61_Ff/exec";
-            
-            fetch(googleSheetsURL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dataHantar)
-            })
-            .then(() => { tg.sendData(JSON.stringify(dataHantar)); })
-            .catch(err => { tg.sendData(JSON.stringify(dataHantar)); });
+    // MASUKKAN URL WEB APP ANDA YANG ADA /exec DI BELAKANG
+    let googleSheetsURL = "https://script.google.com/macros/s/AKfycbyYhZaR6E3xk9cPa8AnXue2JksB6wCoX5nLZfhUrF-rE3CZBHXYtWR15AOwigH61_Ff/exec";
+
+    // Hantar ke Google Sheets
+    fetch(googleSheetsURL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(dataHantar)
+    })
+    .then(() => {
+        alert("MARKAH BERJAYA DIHANTAR!");
+        if (tg && tg.sendData) {
+            tg.sendData(JSON.stringify(dataHantar));
         }
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        if (tg && tg.sendData) {
+            tg.sendData(JSON.stringify(dataHantar));
+        }
+    });
+}
     </script>
 </body>
 </html>
