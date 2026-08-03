@@ -196,8 +196,33 @@
         }
 
         function sendToBot() {
-            let finalHP = Math.max(0, totalScore);
-            tg.sendData(JSON.stringify({name: pName, class: pClass, score: finalHP}));
+    let finalHP = Math.max(0, totalScore);
+    
+    // LURUSKAN DATA UNTUK DIHANTAR
+    let dataHantar = {
+        name: pName,
+        class: pClass,
+        score: finalHP
+    };
+
+    // 1. HANTAR KE GOOGLE SHEETS (Gantikan URL di bawah dengan URL Web App anda sendiri!)
+    let googleSheetsURL = "https://script.google.com/macros/s/AKfycbyYhZaR6E3xk9cPa8AnXue2JksB6wCoX5nLZfhUrF-rE3CZBHXYtWR15AOwigH61_Ff/exec";
+    
+    fetch(googleSheetsURL, {
+        method: "POST",
+        mode: "no-cors", // Mengelakkan masalah CORS browser
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataHantar)
+    })
+    .then(() => {
+        // 2. HANTAR DATA KE TELEGRAM BOT (Asal)
+        tg.sendData(JSON.stringify(dataHantar));
+    })
+    .catch(err => {
+        console.error("Gagal hantar ke Sheets:", err);
+        tg.sendData(JSON.stringify(dataHantar));
+    });
+}
         }
     </script>
 </body>
